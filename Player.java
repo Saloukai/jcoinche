@@ -11,9 +11,9 @@ import java.util.Arrays;
  * Created by oreo on 21/11/16.
  * Classe représentant un joueur
  */
-public class Player {
-    /**Liste des Cartes du joueur**/
-    private Cartes[] main;
+public class Joueurs {
+    /**Liste des Cards du joueur**/
+    private Cards[] main;
     /**Booleen pour savoir si oui ou non c'est le tour du joueur**/
     private boolean turn;
     /** Nom du joueur **/
@@ -40,11 +40,11 @@ public class Player {
      * @param session
      *      Session du client permettant au serveur de communiquer avec.
      */
-    Player(int team, long id, IoSession session)
+    Joueurs(int team, long id, IoSession session)
     {
         turn = false;
         IA = false;
-        this.name = String.format("Player%d", id);
+        this.name = String.format("Joueurs%d", id);
         this.team = team;
         this.session = session;
         this.msg = null;
@@ -64,7 +64,7 @@ public class Player {
      * @param id
      *      Id aléatoire
      */
-    Player(String name, int team, long id)
+    Joueurs(String name, int team, long id)
     {
         turn = false;
         this.IA = true;
@@ -158,19 +158,19 @@ public class Player {
      * @return
      *      La liste des cartes
      */
-    public Cartes[] getMain()
+    public Cards[] getMain()
     {
         return this.main;
     }
 
     /**
      * Permet de set la main d'un joueur en piochiant 8 cartes
-     * @param paquet
-     *      Le paquet dans lequel on va piocher
+     * @param pack
+     *      Le pack dans lequel on va piocher
      */
-    public void setCards(Paquet paquet)
+    public void setCards(Paquet pack)
     {
-       this.main = paquet.piocher(8);
+       this.main = pack.piocher(8);
     }
 
     /**
@@ -240,7 +240,7 @@ public class Player {
      * @return
      *      Le nombre de cartes de la couleur demandée
      */
-    public int getNbCards(Cartes.Couleur c) {
+    public int getNbCards(Cards.Couleur c) {
         int total = 0;
         for (int j = 0; j < this.main.length; j++) {
             if (main[j].getCouleur() == c)
@@ -257,10 +257,10 @@ public class Player {
      * @return
      *      La carte si existante ou null dans le cas contraire
      */
-    public Cartes findCard(String card)
+    public Cards findCard(String card)
     {
         Paquet p = new Paquet();
-        Cartes c[] = p.piocher(32);
+        Cards c[] = p.piocher(32);
         for (int i = 0; i < 32; i++)
             if (c[i].toString().equals(card))
                 return c[i];
@@ -274,16 +274,16 @@ public class Player {
      * @return
      *      Null si il ne peut pas jouer cette carte sinon la carte jouée
      */
-    public Cartes play(String card)
+    public Cards play(String card)
     {
-        Cartes check = findCard(card);
+        Cards check = findCard(card);
         if (check == null)
         {
             if (this.isIA() == false)
                 session.write("ERROR");
             return null;
         }
-        Cartes tmp[] = new Cartes[this.getNbCards() - 1];
+        Cards tmp[] = new Cards[this.getNbCards() - 1];
         int j = 0;
         for (int i = 0; i < this.getNbCards(); i++)
         {
@@ -307,16 +307,16 @@ public class Player {
      * @return
      *      Null si il ne peut pas jouer cette carte sinon la carte jouée
      */
-    public Cartes play(String card, Cartes.Couleur v, Cartes.Couleur atout)
+    public Cards play(String card, Cards.Couleur v, Cards.Couleur atout)
     {
-        Cartes check = findCard(card);
+        Cards check = findCard(card);
         if (check == null)
         {
             if (this.isIA() == false)
                 session.write("ERROR");
             return null;
         }
-        Cartes tmp[] = new Cartes[this.getNbCards() - 1];
+        Cards tmp[] = new Cards[this.getNbCards() - 1];
         int j = 0;
         for (int i = 0; i < this.getNbCards(); i++)
         {

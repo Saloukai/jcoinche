@@ -4,7 +4,7 @@ package Jcoinche.server;
  * Created by oreo on 21/11/16.
  * Classe représentant une carte de jeu.
  */
-public class Cartes
+public class Cards
 {
     /** Rang de la carte. */
     public enum Rang
@@ -32,7 +32,7 @@ public class Cartes
      * @param
      *      couleur La couleur de la carte
      */
-    public Cartes(Rang rang, Couleur couleur) {
+    public Cards(Rang rang, Couleur couleur) {
         this.rang = rang;
         this.couleur = couleur;
     }

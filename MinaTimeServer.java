@@ -18,12 +18,12 @@ import java.nio.charset.Charset;
 import java.util.Scanner;
 
 /**
- * Main du serveur Initialise l'acceptor et appelle le GameHandler
+ * Main du serveur Initialise l'ioa et appelle le JeuHandler
  */
 public class MinaTimeServer
 {
     public static void main( String[] args ) throws IOException {
-        Game game = new Game();
+        Jeu game = new Jeu();
         Scanner reader = new Scanner(System.in);
         int port = 0;
         while (port < 1024 || port > 65535) {
@@ -35,15 +35,15 @@ public class MinaTimeServer
             System.out.println("How many real players do you want ? (Choose between 0 and 4)");
             players = reader.nextInt();
         }
-        IoAcceptor acceptor = new NioSocketAcceptor();
-        acceptor.getFilterChain().addLast( "logger", new LoggingFilter() );
-        acceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
-        acceptor.setHandler(  new TimeServerHandler(game) );
-        acceptor.getSessionConfig().setReadBufferSize( 2048 );
-        acceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
-        acceptor.bind( new InetSocketAddress(port) );
+        IoAcceptor ioa = new NioSocketAcceptor();
+        ioa.getFilterChain().addLast( "logger", new LoggingFilter() );
+        ioa.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
+        ioa.setHandler(  new TimeServerHandler(game) );
+        ioa.getSessionConfig().setReadBufferSize( 2048 );
+        ioa.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
+        ioa.bind( new InetSocketAddress(port) );
         try {
-            new GameHandler(acceptor, players);
+            new JeuHandler(ioa, players);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

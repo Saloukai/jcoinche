@@ -13,14 +13,14 @@ import org.apache.mina.core.session.IoSession;
 public class TimeServerHandler extends IoHandlerAdapter
 {
     /** Stocke le jeu pour acceder au joueurs par la suite **/
-    public Game game;
+    public Jeu game;
 
     /**
      * Constructeur
      * @param game
      *      Le jeu à set
      */
-    TimeServerHandler(Game game)
+    TimeServerHandler(Jeu game)
     {
         this.game = game;
     }
@@ -30,7 +30,7 @@ public class TimeServerHandler extends IoHandlerAdapter
      * @param game
      *      Jeu à set
      */
-    public void setGame(Game game)
+    public void setJeu(Jeu game)
     {
         this.game = game;
     }
@@ -62,7 +62,7 @@ public class TimeServerHandler extends IoHandlerAdapter
     {
         String str = message.toString();
         if( str.trim().equalsIgnoreCase("quit") ) {
-            if (this.game.start == true)
+            if (this.game.debut == true)
             {
                 for (int i = 0; i < 4; i++) {
                     if (game.players[i].isIA() == false) {
@@ -76,7 +76,7 @@ public class TimeServerHandler extends IoHandlerAdapter
                 session.close();
             return;
         }
-        if (this.game.start)
+        if (this.game.debut)
         {
             for(int i = 0; i < 4; i++)
             {

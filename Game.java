@@ -5,71 +5,43 @@ import org.apache.mina.core.service.IoAcceptor;
 import java.util.Random;
 
 
-/**
- * Created by oreo on 21/11/16.
- * Classe représentant le jeu.
- */
-public class Game {
-    /** Liste des joueurs **/
-    Player[] players;
-    /** Score de la Team A **/
-    private int scoreTeamA;
-    /** Score de la Team B **/
-    private int scoreTeamB;
-    /** Acceptor contenant les sessions des clients **/
-    private IoAcceptor acceptor;
-    /** Le premier joueur à jouer ors du tour **/
-    private Player first;
-    /** La couleur de l'atout pendant le tour **/
-    private Cartes.Couleur atout;
-    /** La couleur à jouer pendant le tour **/
-    private Cartes.Couleur value;
-    /** Permet de savoir si la partie à commencer ou si l'on attend encore des joueurs **/
-    boolean start;
+public class Jeu {
+    Joueurs[] players;
+    private int score1;
+    private int score2;
+    private IoAcceptor ioa;
+    private Joueurs premier;
+    private Cards.Couleur atout;
+    private Cards.Couleur value;
+    boolean debut;
 
-    /**
-     * Initialise le jeu avec tous les paramètres nécessaires.
-     *
-     * @param acceptor
-     *      contients les sessions clients des differents joeurs
-     * @param p1
-     *      joueur 1
-     * @param p2
-     *      joueur 2
-     * @param p3
-     *      joueur 3
-     * @param p4
-     *      joueur 4
-     * @param paquet
-     *      paquet initial
-     */
-    Game (IoAcceptor acceptor, Player p1, Player p2, Player p3, Player p4, Paquet paquet)
+    Jeu (IoAcceptor ioa, Joueurs jA, Joueurs jB, Joueurs jC, Joueurs jD, Paquet pack)
     {
-        this.start = true;
-        p1.setCards(paquet);
-        p2.setCards(paquet);
-        p3.setCards(paquet);
-        p4.setCards(paquet);
-        first = p1;
-        this.players = new Player[4];
-        this.players[0] = p1;
-        this.players[1] = p2;
-        this.players[2] = p3;
-        this.players[3] = p4;
-        this.scoreTeamA = 0;
-        this.scoreTeamB = 0;
+        this.debut = true;
+        jA.setCards(pack);
+        jB.setCards(pack);
+        jC.setCards(pack);
+        jD.setCards(pack);
+        premier = jA;
+        this.players = new Joueurs[4];
+        this.players[0] = jA;
+        this.players[1] = jB;
+        this.players[2] = jC;
+        this.players[3] = jD;
+        this.score1 = 0;
+        this.score2 = 0;
         this.atout = randomAtout();
-        this.acceptor = acceptor;
+        this.ioa = ioa;
     }
 
     /***
      * Dans le cas où tous les clients ne sont pas encore instanciés
      */
-    Game ()
+    Jeu ()
     {
-        this.start = false;
-        this.scoreTeamA = 0;
-        this.scoreTeamB = 0;
+        this.debut = false;
+        this.score1 = 0;
+        this.score2 = 0;
     }
 
     /**
@@ -77,10 +49,10 @@ public class Game {
      * @return
      *          Couleur de l'atout
      */
-    private static Cartes.Couleur randomAtout()
+    private static Cards.Couleur randomAtout()
     {
         Random RANDOM = new Random();
-        return Cartes.Couleur.values()[RANDOM.nextInt(4)];
+        return Cards.Couleur.values()[RANDOM.nextInt(4)];
     }
 
     /***
@@ -90,7 +62,7 @@ public class Game {
      */
     int getScoreTeamA()
     {
-        return this.scoreTeamA;
+        return this.score1;
     }
 
     /***
@@ -100,7 +72,7 @@ public class Game {
      */
     int getScoreTeamB()
     {
-        return this.scoreTeamB;
+        return this.score2;
     }
 
     /**
@@ -108,7 +80,7 @@ public class Game {
      * @param v
      *      La couleur de la carte jouée par le premier joueur
      */
-    private void setValue(Cartes.Couleur v)
+    private void setValue(Cards.Couleur v)
     {
         this.value = v;
         System.out.println("Value is now : " + this.value);
@@ -121,7 +93,7 @@ public class Game {
      */
     private void setScoreTeamA(int points)
     {
-        this.scoreTeamA += points;
+        this.score1 += points;
     }
 
     /**
@@ -131,7 +103,7 @@ public class Game {
      */
     private void setScoreTeamB(int points)
     {
-        this.scoreTeamB += points;
+        this.score2 += points;
     }
 
     /**
@@ -149,11 +121,11 @@ public class Game {
      * @return
      *      La liste des joueurs dans l'ordre de jeu.
      */
-    private Player[] setOrder()
+    private Joueurs[] setOrder()
     {
-        Player order[] = new Player[4];
+        Joueurs order[] = new Joueurs[4];
         int i = 0;
-        while (players[i] != this.first)
+        while (players[i] != this.premier)
             i+=1;
         int j = 0;
         while (j < 4)
@@ -187,14 +159,14 @@ public class Game {
     void turn()
     {
         this.setAtout();
-        Player order[] = setOrder();
-        Cartes set[] = new Cartes[4];
+        Joueurs order[] = setOrder();
+        Cards set[] = new Cards[4];
         int atoutPoints[] = {0,0,14,10,20,3,4,11};
         int normalPoints[] = {0,0,0,10,20,3,4,11};
-        if (!first.isIA())
-            first.session.write("PLAY:NULL-" + this.atout);
+        if (!premier.isIA())
+            premier.session.write("PLAY:NULL-" + this.atout);
         order[0].setTurn(true);
-        Cartes tmp = null;
+        Cards tmp = null;
 
         if (order[0].isIA())
         {
@@ -273,7 +245,7 @@ public class Game {
                     at = true;
             }
 
-            Cartes max = set[0];
+            Cards max = set[0];
             int nb = 0;
             for (int e = 0; e < 4; e++) {
                 if (at) {
@@ -292,18 +264,18 @@ public class Game {
                     }
                 }
             }
-            first = players[nb];
-            first.setScore(score);
+            premier = players[nb];
+            premier.setScore(score);
             System.out.println("Played:");
             System.out.println(order[0].getName() + ": " + set[0].toString());
             System.out.println(order[1].getName() + ": " + set[1].toString());
             System.out.println(order[2].getName() + ": " + set[2].toString());
             System.out.println(order[3].getName() + ": " + set[3].toString());
-            if (first.getTeam() == 1)
+            if (premier.getTeam() == 1)
                 this.setScoreTeamA(score);
             else
                 this.setScoreTeamB(score);
-            System.out.println("\nJoueur: " + first.getName() + " won this round with " + score + " points");
+            System.out.println("\nJoueur: " + premier.getName() + " won this round with " + score + " points");
             System.out.println("Score : TeamA " + this.getScoreTeamA() + " - TeamB " + this.getScoreTeamB());
             System.out.println("--------------------------------------------\n");
             for (int x = 0; x < 4; x++) {

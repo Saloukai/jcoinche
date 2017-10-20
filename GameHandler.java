@@ -4,62 +4,62 @@ import org.apache.mina.core.service.IoAcceptor;
 
 import java.util.ArrayList;
 
-public class GameHandler
+public class JeuHandler
 {
 
     /**
      * Classe qui va gérer tout le jeu (nombre de tour initialisation etc...)
-     * @param acceptor
+     * @param ioa
      *      Les sessions des differents joueurs ainsi
      * @param nb_players
      *      Le nombres de joueurs réels (entre 0 et 4) le reste seront des IA
      */
 
-    public GameHandler(IoAcceptor acceptor, int nb_players) throws InterruptedException {
-        boolean start = true;
+    public JeuHandler(IoAcceptor ioa, int nb_players) throws InterruptedException {
+        boolean debut = true;
         int nb = -1;
-        while (start) {
-            if (acceptor.getManagedSessionCount() == nb_players)
-                start = false;
+        while (debut) {
+            if (ioa.getManagedSessionCount() == nb_players)
+                debut = false;
             else
             {
-                if (acceptor.getManagedSessionCount() != nb) {
-                    nb = acceptor.getManagedSessionCount();
-                    System.out.println("Waiting for players to connect : " + acceptor.getManagedSessionCount() + "/" + nb_players + " connected");
+                if (ioa.getManagedSessionCount() != nb) {
+                    nb = ioa.getManagedSessionCount();
+                    System.out.println("Waiting for players to connect : " + ioa.getManagedSessionCount() + "/" + nb_players + " connected");
                 }
             }
         }
 
-        Paquet paquet = new Paquet();
+        Paquet pack = new Paquet();
         System.out.println("--------------------------------------------");
-        System.out.println("COWABUNGAAAA - Game can start");
+        System.out.println("Let's Go !");
         System.out.println("--------------------------------------------");
-        ArrayList<Long> intKeys = new ArrayList<>(acceptor.getManagedSessions().keySet());
-        Player p1;
-        Player p2;
-        Player p3;
-        Player p4;
+        ArrayList<Long> intKeys = new ArrayList<>(ioa.getManagedSessions().keySet());
+        Joueurs jA;
+        Joueurs jB;
+        Joueurs jC;
+        Joueurs jD;
         if (nb_players >= 1)
-            p1 = new Player(1, intKeys.get(0), acceptor.getManagedSessions().get(intKeys.get(0)));
+            jA = new Joueurs(1, intKeys.get(0), ioa.getManagedSessions().get(intKeys.get(0)));
         else
-            p1 = new Player("Leonardo", 1, 42);
+            jA = new Joueurs("Leonardo", 1, 42);
         if (nb_players >= 2)
-            p2 = new Player(2, intKeys.get(1), acceptor.getManagedSessions().get(intKeys.get(1)));
+            jB = new Joueurs(2, intKeys.get(1), ioa.getManagedSessions().get(intKeys.get(1)));
         else
-            p2 = new Player("Donatello", 2, 42);
+            jB = new Joueurs("Donatello", 2, 42);
         if (nb_players >= 3)
-            p3 = new Player(1, intKeys.get(2), acceptor.getManagedSessions().get(intKeys.get(2)));
+            jC = new Joueurs(1, intKeys.get(2), ioa.getManagedSessions().get(intKeys.get(2)));
         else
-            p3 = new Player("Michelangelo", 1, 42);
+            jC = new Joueurs("Michelangelo", 1, 42);
         if (nb_players >= 4)
-            p4 = new Player(2, intKeys.get(3), acceptor.getManagedSessions().get(intKeys.get(3)));
+            jD = new Joueurs(2, intKeys.get(3), ioa.getManagedSessions().get(intKeys.get(3)));
         else
-            p4 = new Player("Raphael", 2, 42);
-        Game game = new Game(acceptor, p1, p2, p3, p4, paquet);
+            jD = new Joueurs("Raphael", 2, 42);
+        Jeu game = new Jeu(ioa, jA, jB, jC, jD, pack);
         System.out.println("--------------------------------------------");
         TimeServerHandler toto;
-        toto = (TimeServerHandler) acceptor.getHandler();
-        toto.setGame(game);
+        toto = (TimeServerHandler) ioa.getHandler();
+        toto.setJeu(game);
 
         int turn = 1;
         while (game.getScoreTeamA() < 1000 && game.getScoreTeamB() < 1000) {
@@ -75,11 +75,11 @@ public class GameHandler
                 turn++;
                 game.turn();
             }
-            paquet = new Paquet();
-            game.players[0].setCards(paquet);
-            game.players[1].setCards(paquet);
-            game.players[2].setCards(paquet);
-            game.players[3].setCards(paquet);
+            pack = new Paquet();
+            game.players[0].setCards(pack);
+            game.players[1].setCards(pack);
+            game.players[2].setCards(pack);
+            game.players[3].setCards(pack);
         }
         if (game.getScoreTeamA() > game.getScoreTeamB()) {
             for (int i = 0; i < 4; i++) {

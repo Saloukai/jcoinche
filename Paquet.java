@@ -10,7 +10,7 @@ import java.util.Random;
 class Paquet
 {
     /** Paquet de cartes. */
-    Cartes[] cartes;
+    Cards[] cartes;
 
     /** Nombre d'itérations pour mélanger les cartes. */
     private static final int NB_ITERATIONS = 3;
@@ -21,13 +21,13 @@ class Paquet
      */
     Paquet()
     {
-        // Initialisation des cartes du paquet.
-        this.cartes = new Cartes[Cartes.Rang.values().length * Cartes.Couleur.values().length];
-        for(int i = 0; i < Cartes.Couleur.values().length; i++)
+        // Initialisation des cartes du pack.
+        this.cartes = new Cards[Cards.Rang.values().length * Cards.Couleur.values().length];
+        for(int i = 0; i < Cards.Couleur.values().length; i++)
         {
-            for(int j = 0; j < Cartes.Rang.values().length; j++)
+            for(int j = 0; j < Cards.Rang.values().length; j++)
             {
-                this.cartes[i * Cartes.Rang.values().length + j] = new Cartes(Cartes.Rang.values()[j], Cartes.Couleur
+                this.cartes[i * Cards.Rang.values().length + j] = new Cards(Cards.Rang.values()[j], Cards.Couleur
                         .values()[i]);
             }
         }
@@ -37,7 +37,7 @@ class Paquet
 
 
     /**
-     * Mélange les cartes du paquet.
+     * Mélange les cartes du pack.
      */
     private void melanger()
     {
@@ -53,7 +53,7 @@ class Paquet
 
 
     /**
-     * Echange deux cartes d'un paquet.
+     * Echange deux cartes d'un pack.
      * @param
      *      i L'indice de la première carte à échanger.
      * @param
@@ -61,7 +61,7 @@ class Paquet
      */
     private void echanger(int i, int j)
     {
-        Cartes temp;
+        Cards temp;
         temp = this.cartes[i];
         this.cartes[i] = this.cartes[j];
         this.cartes[j] = temp;
@@ -70,13 +70,13 @@ class Paquet
      * <p>Renvoie un tableau des cartes piochées.</p>
      * @param n Le nombre de cartes poichées.
      * @return Retourne un tableau des cartes piochées ou null s'il n'y a plus assez de cartes dans
-     *         le paquet.
+     *         le pack.
      */
-    Cartes[] piocher(int n)
+    Cards[] piocher(int n)
     {
         if(n <= this.cartes.length + 1)
         {
-            Cartes[] main = Arrays.copyOfRange(this.cartes, 0, n);
+            Cards[] main = Arrays.copyOfRange(this.cartes, 0, n);
             this.cartes = Arrays.copyOfRange(this.cartes, n, this.cartes.length);
 
             return main;
