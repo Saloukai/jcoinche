@@ -1,62 +1,30 @@
 package Jcoinche.server;
 
 import java.util.Date;
-
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-/**
- * Classe gerant les clients et le serveur
- *
- */
 public class TimeServerHandler extends IoHandlerAdapter
 {
-    /** Stocke le jeu pour acceder au joueurs par la suite **/
     public Jeu game;
 
-    /**
-     * Constructeur
-     * @param game
-     *      Le jeu à set
-     */
     TimeServerHandler(Jeu game)
     {
         this.game = game;
     }
 
-    /**
-     * Permet de set le jeu
-     * @param game
-     *      Jeu à set
-     */
     public void setJeu(Jeu game)
     {
         this.game = game;
     }
 
-    /** Apellé lors d'une exception sur une session
-     *
-     * @param session
-     *      La session en cause
-     * @param cause
-     *      La cause
-     * @throws Exception
-     */
     @Override
     public void exceptionCaught( IoSession session, Throwable cause ) throws Exception
     {
         cause.printStackTrace();
     }
 
-    /**
-     * Recois un message et l'attribue à un joeur ou quitte le jeu si necessaire
-     * @param session
-     *      La session ayant envoyé le message
-     * @param message
-     *      Le message envoyé
-     * @throws Exception
-     */
     @Override
     public void messageReceived( IoSession session, Object message ) throws Exception
     {
@@ -96,14 +64,6 @@ public class TimeServerHandler extends IoHandlerAdapter
         }
     }
 
-    /**
-     * Apellé lorsqu'une session est inactive
-     * @param session
-     *      La session en cause
-     * @param status
-     *      Son etat d'inactivité
-     * @throws Exception
-     */
     @Override
     public void sessionIdle( IoSession session, IdleStatus status ) throws Exception {
         /*System.out.println("IDLE " + session.getIdleCount(status));

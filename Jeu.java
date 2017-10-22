@@ -1,7 +1,5 @@
 package Jcoinche.server;
-
 import org.apache.mina.core.service.IoAcceptor;
-
 import java.util.Random;
 
 
@@ -34,9 +32,6 @@ public class Jeu {
         this.ioa = ioa;
     }
 
-    /***
-     * Dans le cas où tous les clients ne sont pas encore instanciés
-     */
     Jeu ()
     {
         this.debut = false;
@@ -44,71 +39,37 @@ public class Jeu {
         this.score2 = 0;
     }
 
-    /**
-     * Permet de générer la valeur de l'atout (appelé à chaque tour)
-     * @return
-     *          Couleur de l'atout
-     */
     private static Cards.Couleur randomAtout()
     {
         Random RANDOM = new Random();
         return Cards.Couleur.values()[RANDOM.nextInt(4)];
     }
 
-    /***
-     * Permet de recuperer le score de la Team A
-     * @return
-     *      score Team A
-     */
     int getScoreTeamA()
     {
         return this.score1;
     }
 
-    /***
-     * Permet de recuperer le score de la Team A
-     * @return
-     *      score Team A
-     */
     int getScoreTeamB()
     {
         return this.score2;
     }
 
-    /**
-     * Permet de set la valeur dominante lors du tour de jeu
-     * @param v
-     *      La couleur de la carte jouée par le premier joueur
-     */
     private void setValue(Cards.Couleur v)
     {
         this.value = v;
         System.out.println("Value is now : " + this.value);
     }
 
-    /**
-     * Permet d'ajouter des points au score de la Team A
-     * @param points
-     *      Le nombre de points à ajouter
-     */
     private void setScoreTeamA(int points)
     {
         this.score1 += points;
     }
 
-    /**
-     * Permet d'ajouter des points au score de la Team B
-     * @param points
-     *      Le nombre de points à ajouter
-     */
     private void setScoreTeamB(int points)
     {
         this.score2 += points;
     }
-
-    /**
-     * Permet de set la couleur de l'atout pour ce tour.
-     */
 
     private void setAtout()
     {
@@ -116,11 +77,6 @@ public class Jeu {
         System.out.println("\nAtout is now : " + this.atout);
     }
 
-    /**
-     * Ordre de jeu des jouerus en fonction du gagnant de la manche précédantes
-     * @return
-     *      La liste des joueurs dans l'ordre de jeu.
-     */
     private Joueurs[] setOrder()
     {
         Joueurs order[] = new Joueurs[4];
@@ -131,31 +87,22 @@ public class Jeu {
         while (j < 4)
         {
             order[j] = players[i];
-            i+=1;
+            i++;
             if (i == 4)
                 i = 0;
-            j+=1;
+            j++;
         }
         return order;
     }
 
-    /**
-     *Fin du jeu. Ferme tous les clients et le serveur.
-     *
-     */
     void end()
     {
         for (int i = 0; i < 4; i++)
-        {
             if (!players[i].isIA())
                 players[i].session.write("QUIT");
-        }
         System.exit(0);
     }
 
-    /**
-     * Correspond à un tour de jeu. Cela permet de faire jouer tour à tour chacun des joueurs.
-     */
     void turn()
     {
         this.setAtout();
@@ -170,16 +117,18 @@ public class Jeu {
 
         if (order[0].isIA())
         {
-            while (tmp == null) {
-            for (int i = 0; i < order[0].getNbCards(); i++) {
+            while (tmp == null)
+            {
+            for (int i = 0; i < order[0].getNbCards(); i++)
+            {
                 tmp = order[0].play(order[0].getMain()[i].toString());
-                if (tmp != null)
+                if (tmp)
                     i = order[0].getNbCards();
                 }
             }
         }
         else {
-            while (tmp == null) {
+            while (!tmp) {
                 while (order[0].getMsg() == null) {
                     System.out.print("");
                 }

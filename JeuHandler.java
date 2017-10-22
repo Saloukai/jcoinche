@@ -6,24 +6,17 @@ import java.util.ArrayList;
 
 public class JeuHandler
 {
-
-    /**
-     * Classe qui va gérer tout le jeu (nombre de tour initialisation etc...)
-     * @param ioa
-     *      Les sessions des differents joueurs ainsi
-     * @param nb_players
-     *      Le nombres de joueurs réels (entre 0 et 4) le reste seront des IA
-     */
-
     public JeuHandler(IoAcceptor ioa, int nb_players) throws InterruptedException {
         boolean debut = true;
         int nb = -1;
-        while (debut) {
+        while (debut)
+        {
             if (ioa.getManagedSessionCount() == nb_players)
                 debut = false;
             else
             {
-                if (ioa.getManagedSessionCount() != nb) {
+                if (ioa.getManagedSessionCount() != nb)
+                {
                     nb = ioa.getManagedSessionCount();
                     System.out.println("Waiting for players to connect : " + ioa.getManagedSessionCount() + "/" + nb_players + " connected");
                 }
@@ -42,19 +35,19 @@ public class JeuHandler
         if (nb_players >= 1)
             jA = new Joueurs(1, intKeys.get(0), ioa.getManagedSessions().get(intKeys.get(0)));
         else
-            jA = new Joueurs("Leonardo", 1, 42);
+            jA = new Joueurs("Jean", 1, 42);
         if (nb_players >= 2)
             jB = new Joueurs(2, intKeys.get(1), ioa.getManagedSessions().get(intKeys.get(1)));
         else
-            jB = new Joueurs("Donatello", 2, 42);
+            jB = new Joueurs("Frederique", 2, 42);
         if (nb_players >= 3)
             jC = new Joueurs(1, intKeys.get(2), ioa.getManagedSessions().get(intKeys.get(2)));
         else
-            jC = new Joueurs("Michelangelo", 1, 42);
+            jC = new Joueurs("Yoan", 1, 42);
         if (nb_players >= 4)
             jD = new Joueurs(2, intKeys.get(3), ioa.getManagedSessions().get(intKeys.get(3)));
         else
-            jD = new Joueurs("Raphael", 2, 42);
+            jD = new Joueurs("Paul", 2, 42);
         Jeu game = new Jeu(ioa, jA, jB, jC, jD, pack);
         System.out.println("--------------------------------------------");
         TimeServerHandler toto;
@@ -62,7 +55,8 @@ public class JeuHandler
         toto.setJeu(game);
 
         int turn = 1;
-        while (game.getScoreTeamA() < 1000 && game.getScoreTeamB() < 1000) {
+        while (game.getScoreTeamA() < 1000 && game.getScoreTeamB() < 1000)
+        {
             while (game.players[0].getNbCards() != 0 && game.getScoreTeamA() < 1000 && game.getScoreTeamB() < 1000) {
                 Thread.sleep(4000);
                 System.out.println("--------------------------------------------");
@@ -81,18 +75,17 @@ public class JeuHandler
             game.players[2].setCards(pack);
             game.players[3].setCards(pack);
         }
-        if (game.getScoreTeamA() > game.getScoreTeamB()) {
-            for (int i = 0; i < 4; i++) {
+        if (game.getScoreTeamA() > game.getScoreTeamB())
+        {
+            for (int i = 0; i < 4; i++)
                 if (!game.players[i].isIA())
                     game.players[i].session.write("END: Team A won with " + game.getScoreTeamA() + " points");
-            }
         }
         else
         {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
                 if (!game.players[i].isIA())
                     game.players[i].session.write("END: Team B won with " + game.getScoreTeamB() + " points");
-            }
         }
         if (game.getScoreTeamA() > game.getScoreTeamB())
             System.out.println("END: Team A won with " + game.getScoreTeamA() + " points");
